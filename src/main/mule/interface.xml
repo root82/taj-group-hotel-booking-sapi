@@ -68,23 +68,6 @@ ns soap http://schemas.xmlsoap.org/soap/envelope
         <flow-ref doc:name="getHotelByHotelIdFlow" doc:id="0d2aa7e7-8a96-4639-911a-6665c3f0749d" name="getHotelByHotelIdFlow"/>
     </flow>
     <flow name="getBookingDetailsById:\soapkit-config">
-        <ee:transform>
-            <ee:message>
-                <ee:set-payload>
-                    <![CDATA[%dw 2.0
-output application/java
-ns soap http://schemas.xmlsoap.org/soap/envelope
----
-{
-    body: {
-        soap#Fault: {
-            faultcode: "soap:Server",
-            faultstring: "Operation [getBookingDetailsById:\soapkit-config] not implemented"
-        }
-    } write "application/xml"
-}]]>
-                </ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="getBookingDetailsByIdFlow" doc:id="75edca2f-528b-4158-b33d-b7d8f8c98f8c" name="getBookingDetailsByIdFlow"/>
     </flow>
 </mule>

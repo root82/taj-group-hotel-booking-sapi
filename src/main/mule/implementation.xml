@@ -68,4 +68,38 @@ output application/xml
 			</on-error-propagate>
 		</error-handler>
 	</flow>
+	
+	
+	<flow name="getBookingDetailsByIdFlow" doc:id="376dbd2e-c602-4f35-b42c-7651d8e05661" >
+		<db:select doc:name="Select" doc:id="ad490a9b-030b-4a98-93fd-eb33f7a700b9" config-ref="db-postgresqlConfig">
+			<db:sql ><![CDATA[SELECT * FROM hotel_bookings where booing_id= :bookingId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/java
+---
+{
+	bookingId: payload.body.getBookingDetailsById.bookingId
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="d5d0ac84-aa86-4f6a-97bd-a4d63e3ca276" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	body: {
+		bookingId: (payload.booing_id default ""),
+		hotelId: (payload.hotel_id default ""),
+		roomCategory: payload.category default "",
+		customerName: (payload.customer_name default ""),
+		customerContactNo: payload.customer_phno default "",
+		noOfRooms: payload.no_of_rooms_booked default 0,
+		duration: payload.durationn default 0,
+		totalAmount: payload.totalamt default 0
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="1eca18d1-4f23-4b3c-ad16-a39946a2f791" message="#[payload]"/>
+	</flow>
+	
+	
 </mule>

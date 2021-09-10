@@ -1,0 +1,9 @@
+{
+	"body": {
+		"getHotelBookingByBookingId":{
+			"bookingId": "1"
+		}
+	},
+	"headers": null,
+	"attachments": null
+}
