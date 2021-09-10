@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="getHotelByHotelIdRequest" format="json">
+      <types:shape format="weave" example="examples/getHotelByHotelIdExample-1.json"><![CDATA[%dw 2.0
+
+type getHotelByHotelIdRequest = {|
+  body: {| getHotelByHotelId: {| hotelId: String |} |}, 
+  headers: Null, 
+  attachments: Null
+|} {"example": "{\\\"body\\\":{\\\"getHotelByHotelId\\\":{\\\"hotelId\\\":\\\"TAJ001\\\"}},\\\"headers\\\":null,\\\"attachments\\\":null}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="getHotelByHotelIdResponseExample" format="json">
+      <types:shape format="weave" example="examples/getHotelByHotelIdResponseExample-2.json"><![CDATA[%dw 2.0
+
+type getHotelByHotelIdResponseExample = {|
+  body: {|
+    getHotelByHotelIdResponse: {|
+      hotelId: String, 
+      hotelName: String, 
+      rating: Number {"typeId": "int"}, 
+      address: {|
+        city: String, 
+        pinCode: String, 
+        state: String
+      |}, 
+      totalRooms: Number {"typeId": "int"}, 
+      availableRooms: Number {"typeId": "int"}, 
+      room: Array<{|        category: String,         price: String      |}>, 
+      checkIn: String, 
+      checkOut: String, 
+      contact: Array<{|        "type": String,         detail: String      |}>
+    |}
+  |}, 
+  headers: Null, 
+  attachments: Null
+|} {"example": "{\\\"body\\\":{\\\"getHotelByHotelIdResponse\\\":{\\\"hotelId\\\":\\\"TAJ001\\\",\\\"hotelName\\\":\\\"TAJ\\\",\\\"rating\\\":5,\\\"address\\\":{\\\"city\\\":\\\"panipat\\\",\\\"pinCode\\\":\\\"123456\\\",\\\"state\\\":\\\"haryana\\\"},\\\"totalRooms\\\":1000,\\\"availableRooms\\\":500,\\\"room\\\":[{\\\"category\\\":\\\"normal\\\",\\\"price\\\":\\\"6500\\\"},{\\\"category\\\":\\\"luxury\\\",\\\"price\\\":\\\"10500\\\"}],\\\"checkIn\\\":\\\"\\\",\\\"checkOut\\\":\\\"\\\",\\\"contact\\\":[{\\\"type\\\":\\\"email\\\",\\\"detail\\\":\\\"panipat@tajgroup.com\\\"},{\\\"type\\\":\\\"phone\\\",\\\"detail\\\":\\\"123123123\\\"}]}},\\\"headers\\\":null,\\\"attachments\\\":null}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#00b80367-3aae-4928-846f-34ead735ccdc"/>
+  <types:enrichment select="#25c6ca27-c141-4fbf-bb79-d801dada5fc7">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="getHotelByHotelIdRequest"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="getHotelByHotelIdResponseExample"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

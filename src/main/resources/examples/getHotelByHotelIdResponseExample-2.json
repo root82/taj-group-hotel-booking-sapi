@@ -1,0 +1,34 @@
+{
+	"body": {
+		"getHotelByHotelIdResponse":{
+			"hotelId": "TAJ001",
+			"hotelName": "TAJ",
+			"rating": 5,
+			"address": {
+				"city": "panipat",
+				"pinCode": "123456",
+				"state": "haryana"				
+			},
+			"totalRooms": 1000,
+			"availableRooms": 500,
+			"room":[{
+				"category": "normal",
+				"price": "6500"
+			},{
+				"category": "luxury",
+				"price": "10500"
+			}],
+			"checkIn":"",
+			"checkOut":"",
+			"contact":[{
+				"type": "email",
+				"detail": "panipat@tajgroup.com"				
+			},{
+				"type": "phone",
+				"detail": "123123123"				
+			}]
+		}
+	},
+	"headers": null,
+	"attachments": null
+}

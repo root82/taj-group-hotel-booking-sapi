@@ -1,0 +1,9 @@
+{
+	"body": {
+		"getHotelByHotelId":{
+			"hotelId": "TAJ001"
+		}
+	},
+	"headers": null,
+	"attachments": null
+}

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getHotelByHotelIdFlow" doc:id="25c6ca27-c141-4fbf-bb79-d801dada5fc7" >
+		<db:select doc:name="selectHotelAndAddress" doc:id="7447e886-94e5-449a-a2ca-29ef82a4c7da" config-ref="db-postgresqlConfig" target="hotel">
+			<db:sql ><![CDATA[select h.*,ha.city ha_city,ha.code ha_code,ha.state ha_state 
+from hotel_address ha, hotels h 
+where ha.hotel_id = h.hotel_id and ha.hotel_id = :hotel_id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/java
+---
+{
+	hotel_id: payload.body.getHotelByHotelId.hotelId
+}]]]></db:input-parameters>
+		</db:select>
+		<db:select doc:name="selectRoomCategory" doc:id="9b3c2be9-5974-4536-804c-67e10889620f" config-ref="db-postgresqlConfig">
+			<db:sql ><![CDATA[select * from hotel_room_category where hotel_id = :hotel_id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/java
+---
+{
+	hotel_id: payload.body.getHotelByHotelId.hotelId
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="00b80367-3aae-4928-846f-34ead735ccdc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	body: {
+		getHotelByHotelIdResponse: {
+			hotelId: vars.hotel.hotel_id,
+			hotelName: vars.hotel.hotel_name default "",
+			rating: vars.hotel.rating default 0,
+			address: {
+				city: vars.hotel.ha_city default "",
+				pinCode: vars.hotel.ha_code default "",
+				state: vars.hotel.ha_state default ""
+			},
+			totalRooms: vars.hotel.total_rooms default 0,
+			availableRooms: vars.hotel.available_rooms default 0,
+			room: payload map ( payload01 , indexOfPayload01 ) -> {
+				category: payload01.category,
+				price: payload01.price as String default ""
+			},
+			checkIn: vars.hotel.check_in as String default "",
+			checkOut: vars.hotel.check_out as String default "",
+			contact: vars.hotel map ( hotel , indexOfHotel ) -> {
+				"type": "phone",
+				detail: hotel.hotel_phoneno default ""
+			},
+			contact: {
+				"type": "email",
+				"detail": vars.hotel.hotel_emailid default""
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="78da4033-c7ac-473d-a765-d0452f93b4f8" message="#[payload]"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="286d7bbf-7ad4-4e68-97d0-fb705cb11fe2" >
+				<logger level="INFO" doc:name="Logger" doc:id="a3539854-7c7c-4107-86bb-9a022d3e2577" message="some error in getHotelByHotelIdFlow"/>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>
