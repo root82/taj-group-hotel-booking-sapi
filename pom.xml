@@ -32,10 +32,6 @@
 				<configuration>
 					<sharedLibraries>
 						<sharedLibrary>
-							<groupId>com.mycompany</groupId>
-							<artifactId>postgresql-42.2.23</artifactId>
-						</sharedLibrary>
-						<sharedLibrary>
 							<groupId>org.postgresql</groupId>
 							<artifactId>postgresql-42.2.23</artifactId>
 						</sharedLibrary>
