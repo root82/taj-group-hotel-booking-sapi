@@ -43,11 +43,11 @@ output application/xml
 			totalRooms: vars.hotel.total_rooms default 0,
 			availableRooms: vars.hotel.available_rooms default 0,
 			room: payload map ( payload01 , indexOfPayload01 ) -> {
-				category: payload01.category,
+				category: payload01.category default " ",
 				price: payload01.price as String default ""
 			},
-			checkIn: vars.hotel.check_in as String default "",
-			checkOut: vars.hotel.check_out as String default "",
+			checkIn: vars.hotel.check_in default " " ,
+			checkOut: vars.hotel.check_out default " ",
 			contact: vars.hotel map ( hotel , indexOfHotel ) -> {
 				"type": "phone",
 				detail: hotel.hotel_phoneno default ""
@@ -95,7 +95,7 @@ output application/xml
 		customerName: (payload.customer_name default ""),
 		customerContactNo: payload.customer_phno default "",
 		noOfRooms: payload.no_of_rooms_booked default 0,
-		duration: payload.durationn default 0,
+		duration: payload.duration default "",
 		totalAmount: payload.totalamt default 0
 	}
 }]]></ee:set-payload>
@@ -126,7 +126,7 @@ output application/json
 {
 	param: vars.hotelsdetails.hotel_id map ":arg$$" 
 		reduce ( $$ ++ ", " ++ $),
-//	param1: vars.hotelsdetails.hotel_id map ":arg$$" 
+	//param1: vars.hotelsdetails.hotel_id map ":arg$$" 
 //		joinBy ", ",
 	values: vars.hotelsdetails.hotel_id map {"arg$$" : $}
 		reduce ((item, obj = {}) -> obj ++ item )
@@ -158,17 +158,17 @@ var fpayload = (pload,fstring) -> (pload filter($.hotel_id == fstring))
 				totalRooms: $.total_rooms default 0,
 				availableRooms: $.available_rooms default 0,
 				room: fpayload(payload,$.hotel_id) map {
-					category: $.category,
-					price: $.price
+					category: $.category default "",
+					price: $.price default ""
 				},
 				checkIn: $.check_in default "",
 				checkOut: $.check_out default "",
 				contact: [{
 					"type": "email",
-					detail: $.hotel_emailid
+					detail: $.hotel_emailid default ""
 				},{
 					"type": "phone",
-					detail: $.hotel_phoneno
+					detail: $.hotel_phoneno default ""
 				}]
 			}
 		}

@@ -18,8 +18,8 @@
 				"category": "luxury",
 				"price": "10500"
 			}],
-			"checkIn":"",
-			"checkOut":"",
+			"checkIn":"12:00",
+			"checkOut":"12:00",
 			"contact":[{
 				"type": "email",
 				"detail": "panipat@tajgroup.com"				

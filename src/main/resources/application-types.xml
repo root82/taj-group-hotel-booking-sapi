@@ -36,7 +36,7 @@ type getHotelByHotelIdResponseExample = {|
   |}, 
   headers: Null, 
   attachments: Null
-|} {"example": "{\\\"body\\\":{\\\"getHotelByHotelIdResponse\\\":{\\\"hotelId\\\":\\\"TAJ001\\\",\\\"hotelName\\\":\\\"TAJ\\\",\\\"rating\\\":5,\\\"address\\\":{\\\"city\\\":\\\"panipat\\\",\\\"pinCode\\\":\\\"123456\\\",\\\"state\\\":\\\"haryana\\\"},\\\"totalRooms\\\":1000,\\\"availableRooms\\\":500,\\\"room\\\":[{\\\"category\\\":\\\"normal\\\",\\\"price\\\":\\\"6500\\\"},{\\\"category\\\":\\\"luxury\\\",\\\"price\\\":\\\"10500\\\"}],\\\"checkIn\\\":\\\"\\\",\\\"checkOut\\\":\\\"\\\",\\\"contact\\\":[{\\\"type\\\":\\\"email\\\",\\\"detail\\\":\\\"panipat@tajgroup.com\\\"},{\\\"type\\\":\\\"phone\\\",\\\"detail\\\":\\\"123123123\\\"}]}},\\\"headers\\\":null,\\\"attachments\\\":null}"}
+|} {"example": "{\\\"body\\\":{\\\"getHotelByHotelIdResponse\\\":{\\\"hotelId\\\":\\\"TAJ001\\\",\\\"hotelName\\\":\\\"TAJ\\\",\\\"rating\\\":5,\\\"address\\\":{\\\"city\\\":\\\"panipat\\\",\\\"pinCode\\\":\\\"123456\\\",\\\"state\\\":\\\"haryana\\\"},\\\"totalRooms\\\":1000,\\\"availableRooms\\\":500,\\\"room\\\":[{\\\"category\\\":\\\"normal\\\",\\\"price\\\":\\\"6500\\\"},{\\\"category\\\":\\\"luxury\\\",\\\"price\\\":\\\"10500\\\"}],\\\"checkIn\\\":\\\"12:00\\\",\\\"checkOut\\\":\\\"12:00\\\",\\\"contact\\\":[{\\\"type\\\":\\\"email\\\",\\\"detail\\\":\\\"panipat@tajgroup.com\\\"},{\\\"type\\\":\\\"phone\\\",\\\"detail\\\":\\\"123123123\\\"}]}},\\\"headers\\\":null,\\\"attachments\\\":null}"}
 
 ]]></types:shape>
     </types:type>
@@ -52,10 +52,10 @@ type getHotelBookingByBookingId = {|
     customerName: String, 
     customerContactNo: String, 
     noOfRooms: Number {"typeId": "int"}, 
-    duration: Number {"typeId": "int"}, 
+    duration: String, 
     totalAmount: Number {"typeId": "int"}
   |}
-|} {"example": "{\\\"body\\\":{\\\"bookingId\\\":\\\"1\\\",\\\"hotelId\\\":\\\"TAJGP1124\\\",\\\"hotelName\\\":\\\"TAJ Chandhigarh\\\",\\\"roomCategory\\\":\\\"Normal\\\",\\\"customerName\\\":\\\"Akshay Kapoor\\\",\\\"customerContactNo\\\":\\\"7206888286\\\",\\\"noOfRooms\\\":1,\\\"duration\\\":1,\\\"totalAmount\\\":6700}}"}
+|} {"example": "{\\\"body\\\":{\\\"bookingId\\\":\\\"1\\\",\\\"hotelId\\\":\\\"TAJGP1124\\\",\\\"hotelName\\\":\\\"TAJ Chandhigarh\\\",\\\"roomCategory\\\":\\\"Normal\\\",\\\"customerName\\\":\\\"Akshay Kapoor\\\",\\\"customerContactNo\\\":\\\"7206888286\\\",\\\"noOfRooms\\\":1,\\\"duration\\\":\\\"1\\\",\\\"totalAmount\\\":6700}}"}
 
 ]]></types:shape>
     </types:type>
