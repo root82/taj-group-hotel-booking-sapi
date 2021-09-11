@@ -113,6 +113,48 @@ type listHotelsByLocationRequestExample = {|
 
 ]]></types:shape>
     </types:type>
+    <types:type name="bookHotelRequestExample" format="json">
+      <types:shape format="weave" example="examples/bookHotelRequestExample.json"><![CDATA[%dw 2.0
+
+type bookHotelRequestExample = {|
+  body: {|
+    bookHotel: {|
+      hotelId: String, 
+      roomCategory: String, 
+      customerName: String, 
+      customerContactNo: String, 
+      noOfRooms: String, 
+      duration: String
+    |}
+  |}, 
+  headers: Null, 
+  attachments: Null
+|} {"example": "{\\\"body\\\":{\\\"bookHotel\\\":{\\\"hotelId\\\":\\\"hotelId\\\",\\\"roomCategory\\\":\\\"roomCategory\\\",\\\"customerName\\\":\\\"customerName\\\",\\\"customerContactNo\\\":\\\"customerContactNo\\\",\\\"noOfRooms\\\":\\\"1\\\",\\\"duration\\\":\\\"1\\\"}},\\\"headers\\\":null,\\\"attachments\\\":null}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="bookHotelResponseExample" format="json">
+      <types:shape format="weave" example="examples/bookHotelResponseExample.json"><![CDATA[%dw 2.0
+
+type bookHotelResponseExample = {|
+  body: {|
+    bookHotelResponse: {|
+      bookingId: Number {"typeId": "int"}, 
+      hotelId: String, 
+      roomCategory: String, 
+      customerName: String, 
+      customerContactNo: String, 
+      noOfRooms: String, 
+      duration: String, 
+      totalAmount: Number {"typeId": "int"}
+    |}
+  |}, 
+  headers: Null, 
+  attachments: Null
+|} {"example": "{\\\"body\\\":{\\\"bookHotelResponse\\\":{\\\"bookingId\\\":1,\\\"hotelId\\\":\\\"hotelid\\\",\\\"roomCategory\\\":\\\"roomCategory\\\",\\\"customerName\\\":\\\"customerName\\\",\\\"customerContactNo\\\":\\\"customerContactNo\\\",\\\"noOfRooms\\\":\\\"1\\\",\\\"duration\\\":\\\"1\\\",\\\"totalAmount\\\":9999}},\\\"headers\\\":null,\\\"attachments\\\":null}"}
+
+]]></types:shape>
+    </types:type>
   </types:catalog>
   <types:enrichment select="#00b80367-3aae-4928-846f-34ead735ccdc"/>
   <types:enrichment select="#25c6ca27-c141-4fbf-bb79-d801dada5fc7">
@@ -169,4 +211,19 @@ type listHotelsByLocationRequestExample = {|
     </types:processor-declaration>
   </types:enrichment>
   <types:enrichment select="#96ebf200-0d17-4460-b5e8-39ea05646d73"/>
+  <types:enrichment select="#fe5d38bd-6b68-433f-a654-481a23cb2d2a">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="bookHotelRequestExample"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="bookHotelResponseExample"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#52e91fe5-b529-4d3b-9359-f2f6c3abf437"/>
 </types:mule>

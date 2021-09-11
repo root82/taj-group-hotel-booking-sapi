@@ -178,6 +178,96 @@ var fpayload = (pload,fstring) -> (pload filter($.hotel_id == fstring))
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="b38783c3-788c-4f08-8f47-be0199767bcb" message="#[payload]" />
 	</flow>
+	<flow name="bookHotelFlow" doc:id="fe5d38bd-6b68-433f-a654-481a23cb2d2a" >
+		<ee:transform doc:name="Transform Message" doc:id="52e91fe5-b529-4d3b-9359-f2f6c3abf437">
+			<ee:message>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="requestPayload" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	bookBotel: {
+		hotelId: payload.body.bookHotel.hotelId,
+		roomCategory: payload.body.bookHotel.roomCategory,
+		customerName: payload.body.bookHotel.customerName,
+		customerContactNo: payload.body.bookHotel.customerContactNo,
+		noOfRooms: payload.body.bookHotel.noOfRooms,
+		duration: payload.body.bookHotel.duration
+	}
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:select doc:name="selectRoomCategoryPrice" doc:id="c7de2617-a880-493d-845d-e3b466dc6999" config-ref="db-postgresqlConfig" target="hotelCategoryPrice">
+			<db:sql ><![CDATA[SELECT hotel_id, category, price
+FROM public.hotel_room_category
+WHERE hotel_id=:hotel_id AND category=:category;
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	hotel_id: vars.requestPayload.bookBotel.hotelId,
+	category: vars.requestPayload.bookBotel.roomCategory
+}]]]></db:input-parameters>
+		</db:select>
+		<db:insert doc:name="insertHotelBooking" doc:id="37c03383-1ffd-4483-bf75-317a6ab6fdaf" config-ref="db-postgresqlConfig">
+			<db:sql ><![CDATA[INSERT INTO public.hotel_bookings
+(hotel_id, category, customer_name, customer_phno, no_of_rooms_booked, duration, totalamt)
+VALUES(:hotel_id, :category, :customer_name, :customer_phno, :no_of_rooms_booked, :duration, :totalamt)
+
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/java
+var tAmt = (rooms,duration,price) -> (rooms * duration * price)
+---
+{
+	hotel_id: payload.body.bookHotel.hotelId, 
+	category: payload.body.bookHotel.roomCategory, 
+	customer_name: payload.body.bookHotel.customerName, 
+	customer_phno: payload.body.bookHotel.customerContactNo, 
+	no_of_rooms_booked: payload.body.bookHotel.noOfRooms, 
+	duration: payload.body.bookHotel.duration,
+	totalamt: tAmt(vars.requestPayload.bookBotel.noOfRooms as Number default 0, 
+				vars.requestPayload.bookBotel.duration as Number default 0,
+				vars.hotelCategoryPrice.price[0] default 0)
+}]]]></db:input-parameters>
+		</db:insert>
+		<db:select doc:name="selectHotelBookingByAll" doc:id="56b81dcb-f26d-45ca-ad1a-e4279a035d1d" config-ref="db-postgresqlConfig">
+			<db:sql ><![CDATA[SELECT max(booking_id) booking_id
+FROM public.hotel_bookings
+WHERE 
+hotel_id = :hotel_id and customer_name = :customer_name and 
+customer_phno = :customer_phno and booking_date = :booking_date;
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	hotel_id: vars.requestPayload.bookBotel.hotelId,
+	customer_name: vars.requestPayload.bookBotel.customerName,
+	customer_phno: vars.requestPayload.bookBotel.customerContactNo,
+	booking_date: now() as String {format: "yyyyMMdd"}
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="c2bbf467-932e-4f4f-8b85-a4fb7dbc6fb8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+var tAmt = (rooms,duration,price) -> (rooms * duration * price)
+---
+{
+	body: {
+		bookHotelResponse: {
+			bookingId: payload.booking_id default 0,
+			hotelId: vars.requestPayload.bookBotel.hotelId,
+			roomCategory: vars.requestPayload.bookBotel.roomCategory,
+			customerName: vars.requestPayload.bookBotel.customerName,
+			customerContactNo: vars.requestPayload.bookBotel.customerContactNo,
+			noOfRooms: vars.requestPayload.bookBotel.noOfRooms,
+			duration: vars.requestPayload.bookBotel.duration,
+			totalAmount: tAmt(vars.requestPayload.bookBotel.noOfRooms as Number default 0, 
+				vars.requestPayload.bookBotel.duration as Number default 0,
+				vars.hotelCategoryPrice.price[0] default 0)
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
 	
 	
 </mule>

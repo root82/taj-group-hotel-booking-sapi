@@ -105,7 +105,7 @@
 		  </xsd:element>
 		  <xsd:element name="noOfRooms" type="xsd:string"></xsd:element>
 		  <xsd:element name="duration" type="xsd:string"></xsd:element>
-		  <xsd:element name="totalAmout" type="xsd:string"></xsd:element>
+		  <xsd:element name="totalAmount" type="xsd:string"></xsd:element>
 	   </xsd:sequence>
 	 </xsd:complexType>
 

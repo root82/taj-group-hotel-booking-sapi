@@ -1,0 +1,16 @@
+{
+	"body": {
+		"bookHotelResponse": {
+			"bookingId": 1,
+			"hotelId": "hotelid",
+			"roomCategory": "roomCategory",
+			"customerName": "customerName",
+			"customerContactNo": "customerContactNo",
+			"noOfRooms": "1",
+			"duration": "1",
+			"totalAmout": 9999
+		}
+	},
+	"headers": null,
+	"attachments": null
+}

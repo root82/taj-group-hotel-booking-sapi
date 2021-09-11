@@ -1,0 +1,14 @@
+{
+  "body" : {
+    "bookHotel" : {
+      "hotelId" : "hotelId",
+      "roomCategory" : "roomCategory",
+      "customerName" : "customerName",
+      "customerContactNo" : "customerContactNo",
+      "noOfRooms" : "1",
+      "duration" : "1"
+    }
+  },
+  "headers" : null,
+  "attachments" : null
+}
