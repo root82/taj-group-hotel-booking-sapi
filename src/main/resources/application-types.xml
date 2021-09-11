@@ -125,4 +125,13 @@ type getHotelBookingByBookingIdExample = {|
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#4d220a68-0976-48ed-a6b1-8ad58ad9042f">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="getHotelByHotelIdResponseExample"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
 </types:mule>

@@ -101,5 +101,55 @@ output application/xml
 		<logger level="INFO" doc:name="Logger" doc:id="1eca18d1-4f23-4b3c-ad16-a39946a2f791" message="#[payload]"/>
 	</flow>
 	
+	<flow name="listHotelsByLocationFlow" doc:id="4d220a68-0976-48ed-a6b1-8ad58ad9042f" >
+		<db:select doc:name="Select" doc:id="91a9b244-babe-4c53-ac6a-7fe083766d09" config-ref="db-postgresqlConfig" target="hotelsdetails">
+			<db:sql><![CDATA[select h.*,ha.city ha_city,ha.code ha_code,ha.state ha_state 
+from hotel_address ha, hotels h 
+where ha.hotel_id = h.hotel_id 
+and h.city= 'DELHI']]></db:sql>
+		</db:select>
+		<db:select doc:name="Select" doc:id="1c145297-d91b-4d64-bd96-57312582ec1c" config-ref="db-postgresqlConfig">
+			<db:sql ><![CDATA[select h.*,hrc.category as category,hrc.price as price from hotel_room_category hrc ,hotels h
+where h.hotel_id = hrc.hotel_id
+and h.city= 'DELHI'
+and hrc.category='LUXURY']]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="4f58af79-2ae5-47ef-8008-f7c45cf66ef0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	body: {
+		getHotelByHotelIdResponse: {
+			hotelId: payload.hotel_id,
+			hotelName: payload.hotel_name default "",
+			rating: payload.rating default 0,
+			address: {
+				city: (vars.hotelsdetails.ha_city default ""),
+				pinCode: vars.hotelsdetails.ha_code default "",
+				state: vars.hotelsdetails.ha_state default ""
+			},
+			totalRooms: payload.total_rooms default 0,
+			availableRooms: payload.available_rooms default 0,
+			room: [{
+				category: payload.category,
+				price: payload.price as String default " ",
+			}],
+			checkIn: (payload.check_in as String default "") ,
+			checkOut: (payload.check_out as String default "") ,
+			contact: (payload map ( payload01 , indexOfPayload01 ) -> {
+				"type": (payload01.hotel_emailid default "") ++ (payload01.hotel_phoneno default "")
+			}) ++ (vars.hotelsdetails map ( hotelsdetail , indexOfHotelsdetail ) -> {
+				detail: (hotelsdetail.hotel_emailid default "") ++ (hotelsdetail.hotel_phoneno default "")
+			})
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b38783c3-788c-4f08-8f47-be0199767bcb" />
+	</flow>
+	
 	
 </mule>
