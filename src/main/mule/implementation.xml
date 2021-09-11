@@ -13,7 +13,7 @@ where ha.hotel_id = h.hotel_id and ha.hotel_id = :hotel_id]]></db:sql>
 			<db:input-parameters ><![CDATA[#[output application/java
 ---
 {
-	hotel_id: payload.body.getHotelByHotelId.hotelId
+	hotel_id: upper(payload.body.getHotelByHotelId.hotelId)
 }]]]></db:input-parameters>
 		</db:select>
 		<db:select doc:name="selectRoomCategory" doc:id="9b3c2be9-5974-4536-804c-67e10889620f" config-ref="db-postgresqlConfig">
@@ -21,7 +21,7 @@ where ha.hotel_id = h.hotel_id and ha.hotel_id = :hotel_id]]></db:sql>
 			<db:input-parameters ><![CDATA[#[output application/java
 ---
 {
-	hotel_id: payload.body.getHotelByHotelId.hotelId
+	hotel_id: upper(payload.body.getHotelByHotelId.hotelId)
 }]]]></db:input-parameters>
 		</db:select>
 		<ee:transform doc:name="Transform Message" doc:id="00b80367-3aae-4928-846f-34ead735ccdc" >
@@ -71,12 +71,14 @@ output application/xml
 	
 	
 	<flow name="getBookingDetailsByIdFlow" doc:id="376dbd2e-c602-4f35-b42c-7651d8e05661" >
-		<db:select doc:name="Select" doc:id="ad490a9b-030b-4a98-93fd-eb33f7a700b9" config-ref="db-postgresqlConfig">
-			<db:sql ><![CDATA[SELECT * FROM hotel_bookings where booing_id= :bookingId]]></db:sql>
+		<db:select doc:name="selectHotelBookings" doc:id="ad490a9b-030b-4a98-93fd-eb33f7a700b9" config-ref="db-postgresqlConfig">
+			<db:sql ><![CDATA[select h.hotel_name, hb.*
+from hotel_bookings hb, hotels h 
+where h.hotel_id = hb.hotel_id and booking_id = :bookingId]]></db:sql>
 			<db:input-parameters ><![CDATA[#[output application/java
 ---
 {
-	bookingId: payload.body.getBookingDetailsById.bookingId
+	bookingId: upper(payload.body.getBookingDetailsById.bookingId)
 }]]]></db:input-parameters>
 		</db:select>
 		<ee:transform doc:name="Transform Message" doc:id="d5d0ac84-aa86-4f6a-97bd-a4d63e3ca276" >
@@ -86,8 +88,9 @@ output application/xml
 ---
 {
 	body: {
-		bookingId: (payload.booing_id default ""),
+		bookingId: payload.booking_id default 0,
 		hotelId: (payload.hotel_id default ""),
+		hotelName: payload.hotel_name default "",
 		roomCategory: payload.category default "",
 		customerName: (payload.customer_name default ""),
 		customerContactNo: payload.customer_phno default "",
@@ -102,53 +105,78 @@ output application/xml
 	</flow>
 	
 	<flow name="listHotelsByLocationFlow" doc:id="4d220a68-0976-48ed-a6b1-8ad58ad9042f" >
-		<db:select doc:name="Select" doc:id="91a9b244-babe-4c53-ac6a-7fe083766d09" config-ref="db-postgresqlConfig" target="hotelsdetails">
-			<db:sql><![CDATA[select h.*,ha.city ha_city,ha.code ha_code,ha.state ha_state 
-from hotel_address ha, hotels h 
-where ha.hotel_id = h.hotel_id 
-and h.city= 'DELHI']]></db:sql>
+		<db:select doc:name="selectHotelsAndAddress" doc:id="91a9b244-babe-4c53-ac6a-7fe083766d09" config-ref="db-postgresqlConfig" target="hotelsdetails">
+			<db:sql><![CDATA[SELECT h.*,ha.city ha_city,ha.code ha_code,ha.state ha_state 
+FROM hotel_address ha, hotels h 
+WHERE ha.hotel_id = h.hotel_id
+AND ha.city = :city]]></db:sql>
+			<db:input-parameters ><![CDATA[#[output application/java
+---
+{
+	city: upper(payload.body.listHotelsByLocation.city)
+}]]]></db:input-parameters>
 		</db:select>
-		<db:select doc:name="Select" doc:id="1c145297-d91b-4d64-bd96-57312582ec1c" config-ref="db-postgresqlConfig">
-			<db:sql ><![CDATA[select h.*,hrc.category as category,hrc.price as price from hotel_room_category hrc ,hotels h
-where h.hotel_id = hrc.hotel_id
-and h.city= 'DELHI'
-and hrc.category='LUXURY']]></db:sql>
+		<ee:transform doc:name="Transform Message" doc:id="96ebf200-0d17-4460-b5e8-39ea05646d73" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="whereInParamAndValues" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	param: vars.hotelsdetails.hotel_id map ":arg$$" 
+		reduce ( $$ ++ ", " ++ $),
+//	param1: vars.hotelsdetails.hotel_id map ":arg$$" 
+//		joinBy ", ",
+	values: vars.hotelsdetails.hotel_id map {"arg$$" : $}
+		reduce ((item, obj = {}) -> obj ++ item )
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:select doc:name="selectRoomCategory" doc:id="1c145297-d91b-4d64-bd96-57312582ec1c" config-ref="db-postgresqlConfig">
+			<db:sql><![CDATA[#['SELECT * FROM hotel_room_category WHERE hotel_id IN ($(vars.whereInParamAndValues.param))']]]></db:sql>
+			<db:input-parameters ><![CDATA[#[vars.whereInParamAndValues.values]]]></db:input-parameters>
 		</db:select>
 		<ee:transform doc:name="Transform Message" doc:id="4f58af79-2ae5-47ef-8008-f7c45cf66ef0" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/xml
+var fpayload = (pload,fstring) -> (pload filter($.hotel_id == fstring))
 ---
 {
 	body: {
-		getHotelByHotelIdResponse: {
-			hotelId: payload.hotel_id,
-			hotelName: payload.hotel_name default "",
-			rating: payload.rating default 0,
-			address: {
-				city: (vars.hotelsdetails.ha_city default ""),
-				pinCode: vars.hotelsdetails.ha_code default "",
-				state: vars.hotelsdetails.ha_state default ""
-			},
-			totalRooms: payload.total_rooms default 0,
-			availableRooms: payload.available_rooms default 0,
-			room: [{
-				category: payload.category,
-				price: payload.price as String default " ",
-			}],
-			checkIn: (payload.check_in as String default "") ,
-			checkOut: (payload.check_out as String default "") ,
-			contact: (payload map ( payload01 , indexOfPayload01 ) -> {
-				"type": (payload01.hotel_emailid default "") ++ (payload01.hotel_phoneno default "")
-			}) ++ (vars.hotelsdetails map ( hotelsdetail , indexOfHotelsdetail ) -> {
-				detail: (hotelsdetail.hotel_emailid default "") ++ (hotelsdetail.hotel_phoneno default "")
-			})
+		listHotelsByLocationResponse: vars.hotelsdetails map {
+			hotel: {
+				hotelId: $.hotel_id,
+				hotelName: $.hotel_name default "",
+				rating: $.rating default 0,
+				address: {
+					city: $.ha_city default "",
+					pinCode: $.ha_code default "",
+					state: $.ha_state default ""
+				},
+				totalRooms: $.total_rooms default 0,
+				availableRooms: $.available_rooms default 0,
+				room: fpayload(payload,$.hotel_id) map {
+					category: $.category,
+					price: $.price
+				},
+				checkIn: $.check_in default "",
+				checkOut: $.check_out default "",
+				contact: [{
+					"type": "email",
+					detail: $.hotel_emailid
+				},{
+					"type": "phone",
+					detail: $.hotel_phoneno
+				}]
+			}
 		}
 	}
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="b38783c3-788c-4f08-8f47-be0199767bcb" />
+		<logger level="INFO" doc:name="Logger" doc:id="b38783c3-788c-4f08-8f47-be0199767bcb" message="#[payload]" />
 	</flow>
 	
 	

@@ -25,24 +25,7 @@
         </apikit-soap:router>
     </flow>
     <flow name="listHotelsByLocation:\soapkit-config">
-        <ee:transform>
-            <ee:message>
-                <ee:set-payload>
-                    <![CDATA[%dw 2.0
-output application/java
-ns soap http://schemas.xmlsoap.org/soap/envelope
----
-{
-    body: {
-        soap#Fault: {
-            faultcode: "soap:Server",
-            faultstring: "Operation [listHotelsByLocation:\soapkit-config] not implemented"
-        }
-    } write "application/xml"
-}]]>
-                </ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="listHotelsByLocationFlow" doc:id="7f037f8d-d0c5-4ab7-8c00-ac7c7dda5c04" name="listHotelsByLocationFlow"/>
     </flow>
     <flow name="bookHotel:\soapkit-config">
         <ee:transform>

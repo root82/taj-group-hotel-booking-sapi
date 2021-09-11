@@ -15,7 +15,13 @@
        </xsd:complexType>
       </xsd:element>
        
-      <xsd:element name="listHotelsByLocationResponse" type="tns:hotelDetailsList" />
+      <xsd:element name="listHotelsByLocationResponse">
+		<xsd:complexType>
+         <xsd:sequence>
+           <xsd:element name="hotel" type="tns:hotelDetailsList" maxOccurs="unbounded"/>
+         </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
 
       <xsd:element name="bookHotel">
       	<xsd:complexType>

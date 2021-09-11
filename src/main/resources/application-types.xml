@@ -84,6 +84,35 @@ type getHotelBookingByBookingIdExample = {|
 
 ]]></types:shape>
     </types:type>
+    <types:type name="lisHotelsByLocationResponseExample" format="json">
+      <types:shape format="weave" example="examples/listHotelsByLocationResponseExample-2.json"><![CDATA[%dw 2.0
+
+type lisHotelsByLocationResponseExample = {|
+  body: {|
+    listHotelsByLocationResponse: Array<{|      hotel: {|        hotelId: String,         hotelName: String,         rating: Number {"typeId": "int"},         address: {|          city: String,           pinCode: String,           state: String        |},         totalRooms: Number {"typeId": "int"},         availableRooms: Number {"typeId": "int"},         room: Array<{|          category: String,           price: String        |}>, 
+        checkIn: String, 
+        checkOut: String, 
+        contact: Array<{|          "type": String,           detail: String        |}>
+      |}
+    |}>
+  |}, 
+  headers: Null, 
+  attachments: Null
+|} {"example": "{\\\"body\\\":{\\\"listHotelsByLocationResponse\\\":[{\\\"hotel\\\":{\\\"hotelId\\\":\\\"TAJ001\\\",\\\"hotelName\\\":\\\"TAJ\\\",\\\"rating\\\":5,\\\"address\\\":{\\\"city\\\":\\\"panipat\\\",\\\"pinCode\\\":\\\"123456\\\",\\\"state\\\":\\\"haryana\\\"},\\\"totalRooms\\\":1000,\\\"availableRooms\\\":500,\\\"room\\\":[{\\\"category\\\":\\\"normal\\\",\\\"price\\\":\\\"6500\\\"},{\\\"category\\\":\\\"luxury\\\",\\\"price\\\":\\\"10500\\\"}],\\\"checkIn\\\":\\\"\\\",\\\"checkOut\\\":\\\"\\\",\\\"contact\\\":[{\\\"type\\\":\\\"email\\\",\\\"detail\\\":\\\"panipat@tajgroup.com\\\"},{\\\"type\\\":\\\"phone\\\",\\\"detail\\\":\\\"123123123\\\"}]}}]},\\\"headers\\\":null,\\\"attachments\\\":null}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="listHotelsByLocationRequestExample" format="json">
+      <types:shape format="weave" example="examples/listHotelsByLocationRequestExample.json"><![CDATA[%dw 2.0
+
+type listHotelsByLocationRequestExample = {|
+  body: {| listHotelsByLocation: {| city: String |} |}, 
+  headers: Null, 
+  attachments: Null
+|} {"example": "{\\\"body\\\":{\\\"listHotelsByLocation\\\":{\\\"city\\\":\\\"TAJ001\\\"}},\\\"headers\\\":null,\\\"attachments\\\":null}"}
+
+]]></types:shape>
+    </types:type>
   </types:catalog>
   <types:enrichment select="#00b80367-3aae-4928-846f-34ead735ccdc"/>
   <types:enrichment select="#25c6ca27-c141-4fbf-bb79-d801dada5fc7">
@@ -127,11 +156,17 @@ type getHotelBookingByBookingIdExample = {|
   </types:enrichment>
   <types:enrichment select="#4d220a68-0976-48ed-a6b1-8ad58ad9042f">
     <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="listHotelsByLocationRequestExample"/>
+        </types:message>
+      </types:input-event>
       <types:output-event>
         <types:message>
-          <types:payload type="getHotelByHotelIdResponseExample"/>
+          <types:payload type="lisHotelsByLocationResponseExample"/>
         </types:message>
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#96ebf200-0d17-4460-b5e8-39ea05646d73"/>
 </types:mule>

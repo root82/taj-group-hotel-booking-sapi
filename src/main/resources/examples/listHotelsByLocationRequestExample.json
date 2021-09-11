@@ -1,0 +1,9 @@
+{
+	"body": {
+		"listHotelsByLocation":{
+			"city": "TAJ001"
+		}
+	},
+	"headers": null,
+	"attachments": null
+}
