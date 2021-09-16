@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
     <apikit-soap:config httpStatusVarName="httpStatus" name="soapkit-config" port="HotelServicePort" service="TajGroupHotelBookingService" wsdlLocation="taj-group-hotel-bookings.wsdl"/>
     <flow name="api-main">
-        <http:listener path="/TajGroupHotelBookingService/HotelServicePort" config-ref="api-httpListenerConfig">
+        <http:listener config-ref="api-httpListenerConfig" path="/TajGroupHotelBookingService/HotelServicePort">
             <http:response statusCode="#[attributes.additionalTransportData.statusCode default 200]">
-                <http:headers><![CDATA[#[attributes.protocolHeaders default {}]]]></http:headers>
+                <http:headers>
+                    <![CDATA[#[attributes.protocolHeaders default {}]]]>
+                </http:headers>
             </http:response>
             <http:error-response statusCode="#[attributes.additionalTransportData.statusCode default 500]">
-                <http:body><![CDATA[#[payload]]]></http:body>
-                <http:headers><![CDATA[#[attributes.protocolHeaders default {}]]]></http:headers>
+                <http:body>
+                    <![CDATA[#[payload]]]>
+                </http:body>
+                <http:headers>
+                    <![CDATA[#[attributes.protocolHeaders default {}]]]>
+                </http:headers>
             </http:error-response>
         </http:listener>
         <apikit-soap:router config-ref="soapkit-config">
@@ -25,15 +31,21 @@
         </apikit-soap:router>
     </flow>
     <flow name="listHotelsByLocation:\soapkit-config">
-		<flow-ref doc:name="listHotelsByLocationFlow" doc:id="7f037f8d-d0c5-4ab7-8c00-ac7c7dda5c04" name="listHotelsByLocationFlow"/>
+        <flow-ref doc:id="7f037f8d-d0c5-4ab7-8c00-ac7c7dda5c04" doc:name="listHotelsByLocationFlow" name="listHotelsByLocationFlow"/>
     </flow>
     <flow name="bookHotel:\soapkit-config">
-		<flow-ref doc:name="bookHotelFlow" doc:id="93246fce-db06-4d9f-8959-9a5c270ca6be" name="bookHotelFlow"/>
+        <flow-ref doc:id="93246fce-db06-4d9f-8959-9a5c270ca6be" doc:name="bookHotelFlow" name="bookHotelFlow"/>
     </flow>
     <flow name="getHotelByHotelId:\soapkit-config">
-        <flow-ref doc:name="getHotelByHotelIdFlow" doc:id="0d2aa7e7-8a96-4639-911a-6665c3f0749d" name="getHotelByHotelIdFlow"/>
+        <flow-ref doc:id="0d2aa7e7-8a96-4639-911a-6665c3f0749d" doc:name="getHotelByHotelIdFlow" name="getHotelByHotelIdFlow"/>
     </flow>
     <flow name="getBookingDetailsById:\soapkit-config">
-		<flow-ref doc:name="getBookingDetailsByIdFlow" doc:id="75edca2f-528b-4158-b33d-b7d8f8c98f8c" name="getBookingDetailsByIdFlow"/>
+        <flow-ref doc:id="75edca2f-528b-4158-b33d-b7d8f8c98f8c" doc:name="getBookingDetailsByIdFlow" name="getBookingDetailsByIdFlow"/>
+    </flow>
+    <flow name="deleteBookingById:\soapkit-config">
+        <flow-ref doc:id="8c1c6d59-04c2-42d0-bb10-4ddf3f843727" doc:name="deleteBookingByBookingId" name="deleteBookingByBookingIdFlow"/>
+    </flow>
+    <flow name="updateBookingDetailsById:\soapkit-config">
+        <flow-ref doc:id="2cb35327-4011-424d-80e0-e0554a17c534" doc:name="updateBookingDetailsByBookingId" name="updateBookingDetailsByBookingIdFlow"/>
     </flow>
 </mule>

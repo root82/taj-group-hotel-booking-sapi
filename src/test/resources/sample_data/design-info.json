@@ -1,5 +1,12 @@
 {
   "sampleData": {
-    "00b80367-3aae-4928-846f-34ead735ccdc": {}
+    "00b80367-3aae-4928-846f-34ead735ccdc": {},
+    "96ebf200-0d17-4460-b5e8-39ea05646d73": {
+      "payload": "sample_data/json.json",
+      "vars-hotelsdetails": "sample_data/list_java_1.dwl"
+    },
+    "4f58af79-2ae5-47ef-8008-f7c45cf66ef0": {
+      "payload": "sample_data/list_java.dwl"
+    }
   }
 }

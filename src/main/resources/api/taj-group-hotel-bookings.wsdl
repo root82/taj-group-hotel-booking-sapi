@@ -110,6 +110,52 @@
 	 </xsd:complexType>
 
 
+	  <xsd:element name="deleteBookingById">
+	  	<xsd:complexType>
+	  		<xsd:sequence>
+
+	  			<xsd:element name="bookingId" type="xsd:string"></xsd:element>
+	  		</xsd:sequence>
+	  	</xsd:complexType>
+	  </xsd:element>
+	  <xsd:element name="deleteBookingByIdResponse">
+	  	<xsd:complexType>
+	  		<xsd:sequence>
+
+	  			<xsd:element name="deleteresponsemsg" type="xsd:string"></xsd:element>
+	  		</xsd:sequence>
+	  	</xsd:complexType>
+	  </xsd:element>
+	  <xsd:element name="updateBookingDetailsById">
+	  	<xsd:complexType>
+	  		<xsd:sequence>
+
+	  			<xsd:element name="in" type="tns:bookingupdateType"></xsd:element>
+	  		</xsd:sequence>
+	  	</xsd:complexType>
+	  </xsd:element>
+	  <xsd:element name="updateBookingDetailsByIdResponse">
+	  	<xsd:complexType>
+	  		<xsd:sequence>
+
+	  			<xsd:element name="out" type="tns:bookingupdateType"></xsd:element>
+	  		</xsd:sequence>
+	  	</xsd:complexType>
+	  </xsd:element>
+    
+	  <xsd:complexType name="bookingupdateType">
+	  	<xsd:sequence>
+	  		<xsd:element name="bookingId" type="xsd:string"></xsd:element>
+	  		<xsd:element name="hotelId" type="xsd:string"></xsd:element>
+	  		<xsd:element name="roomCategory" type="xsd:string"></xsd:element>
+	  		<xsd:element name="customerName" type="xsd:string"></xsd:element>
+	  		<xsd:element name="customerContactNo" type="xsd:string"></xsd:element>
+	  		<xsd:element name="noOfRooms" type="xsd:string"></xsd:element>
+	  		<xsd:element name="duration" type="xsd:string"></xsd:element>
+	  		<xsd:element name="totalAmount" type="xsd:string"></xsd:element>
+	  		<xsd:element name="bookingdate" type="xsd:string"></xsd:element>
+	  	</xsd:sequence>
+	  </xsd:complexType>
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="listHotelsByLocationRequest">
@@ -136,6 +182,18 @@
   <wsdl:message name="getBookingDetailsByIdResponse">
   	<wsdl:part name="parameters" element="tns:getBookingDetailsByIdResponse"></wsdl:part>
   </wsdl:message>
+  <wsdl:message name="deleteBookingByIdRequest">
+  	<wsdl:part name="parameters" element="tns:deleteBookingById"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deleteBookingByIdResponse">
+  	<wsdl:part name="parameters" element="tns:deleteBookingByIdResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBookingDetailsByIdRequest">
+  	<wsdl:part name="parameters" element="tns:updateBookingDetailsById"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBookingDetailsByIdResponse">
+  	<wsdl:part name="parameters" element="tns:updateBookingDetailsByIdResponse"></wsdl:part>
+  </wsdl:message>
   <wsdl:portType name="HotelBookingService">
     <wsdl:operation name="listHotelsByLocation">
       <wsdl:input message="tns:listHotelsByLocationRequest" name="listHotelsByLocation"/>
@@ -152,6 +210,14 @@
     <wsdl:operation name="getBookingDetailsById">
     	<wsdl:input message="tns:getBookingDetailsByIdRequest" name="getBookingDetailsById"></wsdl:input>
     	<wsdl:output message="tns:getBookingDetailsByIdResponse" name="getBookingDetailsByIdResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="deleteBookingById">
+    	<wsdl:input message="tns:deleteBookingByIdRequest"></wsdl:input>
+    	<wsdl:output message="tns:deleteBookingByIdResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateBookingDetailsById">
+    	<wsdl:input message="tns:updateBookingDetailsByIdRequest"></wsdl:input>
+    	<wsdl:output message="tns:updateBookingDetailsByIdResponse"></wsdl:output>
     </wsdl:operation></wsdl:portType>
   <wsdl:binding name="HotelBookingServiceSoapBinding"
   	type="tns:HotelBookingService">
@@ -167,7 +233,7 @@
   		</wsdl:output>
   	</wsdl:operation>
   	<wsdl:operation name="bookHotel">
-  		<soap:operation soapAction="" style="document"/>
+  		<soap:operation soapAction="" style="document" />
   		<wsdl:input name="bookHotel">
   			<soap:body use="literal" />
   		</wsdl:input>
@@ -176,7 +242,7 @@
   		</wsdl:output>
   	</wsdl:operation>
   	<wsdl:operation name="getHotelByHotelId">
-  		<soap:operation soapAction="" style="document"/>
+  		<soap:operation soapAction="" style="document" />
   		<wsdl:input name="getHotelByHotelId">
   			<soap:body use="literal" />
   		</wsdl:input>
@@ -184,12 +250,32 @@
   			<soap:body use="literal" />
   		</wsdl:output>
   	</wsdl:operation>
-  	  	<wsdl:operation name="getBookingDetailsById">
-  		<soap:operation soapAction="" style="document"/>
+  	<wsdl:operation name="getBookingDetailsById">
+  		<soap:operation soapAction="" style="document" />
   		<wsdl:input name="getBookingDetailsById">
   			<soap:body use="literal" />
   		</wsdl:input>
   		<wsdl:output name="getBookingDetailsByIdResponse">
+  			<soap:body use="literal" />
+  		</wsdl:output>
+  	</wsdl:operation>
+  	<wsdl:operation name="deleteBookingById">
+  		<soap:operation
+  			soapAction="http://www.tajgroup.org/TajGroupHotelBookings/deleteBookingById" />
+  		<wsdl:input>
+  			<soap:body use="literal" />
+  		</wsdl:input>
+  		<wsdl:output>
+  			<soap:body use="literal" />
+  		</wsdl:output>
+  	</wsdl:operation>
+  	<wsdl:operation name="updateBookingDetailsById">
+  		<soap:operation
+  			soapAction="http://www.tajgroup.org/TajGroupHotelBookings/updateBookingDetailsById" />
+  		<wsdl:input>
+  			<soap:body use="literal" />
+  		</wsdl:input>
+  		<wsdl:output>
   			<soap:body use="literal" />
   		</wsdl:output>
   	</wsdl:operation>

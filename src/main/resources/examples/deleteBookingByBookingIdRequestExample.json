@@ -1,0 +1,9 @@
+{
+	"body": {
+		"deleteBookingById":{
+			"bookingId": "1"
+		}
+	},
+	"headers": null,
+	"attachments": null
+}

@@ -1,0 +1,12 @@
+{
+  "flightId": "2214",
+  "flightCode": "6E",
+  "departureDate": "2021/09/26",
+  "departureTime": "09:00",
+  "passengerName": "Akshay Kapoor",
+  "passengerIdProof": "AFRGT0245R",
+  "seatsBooked": 3,
+  "pricePerSeat": 4500,
+  "currency": "INR",
+  "bookingdate": "2021/09/12"
+}

@@ -268,6 +268,92 @@ var tAmt = (rooms,duration,price) -> (rooms * duration * price)
 			</ee:message>
 		</ee:transform>
 	</flow>
+	<flow name="deleteBookingByBookingIdFlow" doc:id="ec373184-4274-4685-8eb5-a183793594f5" >
+		<db:update doc:name="updateCancellationStatus" doc:id="c07283d4-9e19-40a0-ae10-607c76a4e08b" config-ref="db-postgresqlConfig">
+			<db:sql ><![CDATA[update hotel_bookings set cancellationstatus ='Y'
+where booking_id = :bookingid]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	bookingid: payload.body.deleteBookingById.bookingId
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform Message" doc:id="1e90fb84-fbb7-42a1-a4da-dff4702176f5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	message: "Booking Cancelled Successfully"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="updateBookingDetailsByBookingIdFlow" doc:id="bb369ba6-15ae-45fa-bf83-68ba6ad11339" >
+		<set-variable value="#[payload.body.updateBookingDetailsById.in.bookingId]" doc:name="bookingId" doc:id="3f8dbe1b-60f4-4e6c-9f60-e259fb1bb522" variableName="bookingId"/>
+		<set-variable value="#[payload.body.updateBookingDetailsById.in.hotelId]" doc:name="hotelid" doc:id="1f735bc1-0e7f-43f1-9bf5-e11fedc5e7d0" variableName="hotelid"/>
+		<db:update doc:name="updateBookingDetailsByBookingId" doc:id="5ae128be-4d20-4b47-8742-bc297e080986" config-ref="db-postgresqlConfig">
+			<db:sql ><![CDATA[update hotel_bookings set
+hotel_id = :hotel_id ,
+category = :category ,
+customer_name = :customer_name ,
+customer_phno = :customer_phno ,
+no_of_rooms_booked = :no_of_rooms_booked ,
+duration  = :duration ,
+totalamt = :totalamt ,
+booking_date = :booking_date 
+where booking_id =	:booking_id 
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	
+hotel_id : payload.body.updateBookingDetailsById.in.hotelId,
+category : payload.body.updateBookingDetailsById.in.roomCategory,
+customer_name : payload.body.updateBookingDetailsById.in.customerName,
+customer_phno : payload.body.updateBookingDetailsById.in.customerContactNo,
+no_of_rooms_booked: payload.body.updateBookingDetailsById.in.noOfRooms,
+duration : payload.body.updateBookingDetailsById.in.duration,
+totalamt : payload.body.updateBookingDetailsById.in.totalAmount,
+booking_date : payload.body.updateBookingDetailsById.in.bookingdate,
+booking_id: vars.bookingId
+
+}]]]></db:input-parameters>
+		</db:update>
+		<db:select doc:name="selectHotelName" doc:id="cea58dc2-6f9c-457c-a30e-bc826982d70f" config-ref="db-postgresqlConfig">
+			<db:sql ><![CDATA[select hotel_name from hotels   where hotel_id= :hotelid
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	hotelid: vars.hotelid
+}]]]></db:input-parameters>
+		</db:select>
+		<set-variable value="#[payload.hotel_name]" doc:name="hotelname" doc:id="408cab23-b9c5-40a9-b24a-e35677ca0106" variableName="hotelname"/>
+		<db:select doc:name="selectUpdatedBookingDetails" doc:id="c5040f27-e85b-42ce-af02-f84cd23ba1cd" config-ref="db-postgresqlConfig">
+			<db:sql ><![CDATA[select * from hotel_bookings where booking_id = :bookingid]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	bookingid: vars.bookingId
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="606b7644-9fe6-44aa-91e8-ca06f3f043b2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	body: {
+		updateBookingDetailsById: {
+			bookingId: payload.booking_id as String default "",
+			hotelId: payload.hotel_id default "",
+			hotelName: vars.hotelname,
+			roomCategory: payload.category default "",
+			customerName: payload.customer_name default "",
+			customerContactNo: payload.customer_phno default "",
+			noOfRooms: payload.no_of_rooms_booked as String default "",
+			duration: payload.duration default "",
+			bookingdate: payload.booking_date,
+			totalAmount: payload.totalamt default 0
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
 	
 	
 </mule>
