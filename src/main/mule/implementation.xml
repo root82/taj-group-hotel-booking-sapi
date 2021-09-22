@@ -293,6 +293,7 @@ var tAmt = (rooms,duration,price) -> (rooms * duration * price)
 		</ee:transform>
 	</flow>
 	<flow name="deleteBookingByBookingIdFlow" doc:id="ec373184-4274-4685-8eb5-a183793594f5" >
+		<set-variable value="#[payload.body.deleteBookingById.bookingId]" doc:name="bookingId" doc:id="8162f327-01cc-4e8e-b8e6-98c17839d07e" variableName="bookingId"/>
 		<db:update doc:name="updateCancellationStatus" doc:id="c07283d4-9e19-40a0-ae10-607c76a4e08b" config-ref="db-postgresqlConfig">
 			<db:sql ><![CDATA[update hotel_bookings set cancellationstatus ='Y'
 where booking_id = :bookingid]]></db:sql>
@@ -306,7 +307,9 @@ where booking_id = :bookingid]]></db:sql>
 output application/xml
 ---
 {
-	message: "Booking Cancelled Successfully"
+	message: if (payload.affectedRows == 0)
+			"Booking Id: " ++ (vars.bookingId) ++ " not available"
+		else "Booking Cancelled Successfully"
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
