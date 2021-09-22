@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 	<flow name="getHotelByHotelIdFlow" doc:id="25c6ca27-c141-4fbf-bb79-d801dada5fc7" >
 		<db:select doc:name="selectHotelAndAddress" doc:id="7447e886-94e5-449a-a2ca-29ef82a4c7da" config-ref="db-postgresqlConfig" target="hotel">
 			<db:sql ><![CDATA[select h.*,ha.city ha_city,ha.code ha_code,ha.state ha_state 
@@ -116,6 +117,9 @@ AND ha.city = :city]]></db:sql>
 	city: upper(payload.body.listHotelsByLocation.city)
 }]]]></db:input-parameters>
 		</db:select>
+		<validation:is-true doc:name="Is true" doc:id="f372455e-749f-419d-a73b-74e5b40e6445" expression="#[sizeOf(vars.hotelsdetails) &gt; 0]" message='#["No hotels available for location: " ++ payload.body.listHotelsByLocation.city]'>
+			<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="APP:NO_HOTELS" />
+		</validation:is-true>
 		<ee:transform doc:name="Transform Message" doc:id="96ebf200-0d17-4460-b5e8-39ea05646d73" >
 			<ee:message >
 			</ee:message>
@@ -177,6 +181,26 @@ var fpayload = (pload,fstring) -> (pload filter($.hotel_id == fstring))
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="b38783c3-788c-4f08-8f47-be0199767bcb" message="#[payload]" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="3313716a-c974-4fc1-9ebd-e0ece5360b56" type="APP:NO_HOTELS">
+				<ee:transform doc:name="Transform Message" doc:id="e610e8ee-7c51-4412-a04d-56d0a8583193">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+ns soap http://schemas.xmlsoap.org/soap/envelope
+---
+{
+    body: {
+        soap#Fault: {
+            faultcode: "1",
+            faultstring: error.description
+        }
+    } write "application/xml"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
 	</flow>
 	<flow name="bookHotelFlow" doc:id="fe5d38bd-6b68-433f-a654-481a23cb2d2a" >
 		<ee:transform doc:name="Transform Message" doc:id="52e91fe5-b529-4d3b-9359-f2f6c3abf437">

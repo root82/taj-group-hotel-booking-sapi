@@ -4,7 +4,7 @@
 
 	<groupId>com.mycompany</groupId>
 	<artifactId>taj-group-hotel-booking-sapi</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<packaging>mule-application</packaging>
 
 	<name>taj-group-hotel-booking-sapi</name>
@@ -71,6 +71,12 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql-42.2.23</artifactId>
 			<version>0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-validation-module</artifactId>
+			<version>1.4.5</version>
+			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>
 
