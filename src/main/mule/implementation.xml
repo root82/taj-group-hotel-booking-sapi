@@ -365,16 +365,17 @@ output application/xml
 {
 	body: {
 		updateBookingDetailsById: {
-			bookingId: payload.booking_id as String default "",
-			hotelId: payload.hotel_id default "",
-			hotelName: vars.hotelname,
-			roomCategory: payload.category default "",
-			customerName: payload.customer_name default "",
-			customerContactNo: payload.customer_phno default "",
-			noOfRooms: payload.no_of_rooms_booked as String default "",
-			duration: payload.duration default "",
-			bookingdate: payload.booking_date,
-			totalAmount: payload.totalamt default 0
+			in: {
+				bookingId: payload[0].booking_id as String,
+				hotelId: payload[0].hotel_id default "",
+				roomCategory: payload[0].category default "",
+				customerName: payload[0].customer_name default "",
+				customerContactNo: payload[0].customer_phno default "",
+				noOfRooms: payload[0].no_of_rooms_booked as Number default 0,
+				duration: payload[0].duration default "",
+				bookingdate: payload[0].booking_date,
+				totalAmount: payload[0].totalamt default 0
+			}
 		}
 	}
 }]]></ee:set-payload>
